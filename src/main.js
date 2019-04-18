@@ -3,11 +3,10 @@
 import 'babel-polyfill';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'toastr/build/toastr.min.css';
-import 'font-awesome/css/font-awesome.css';
+import VueResource from 'vue-resource';
 import Vue from 'vue';
 import App from './App';
 import router from './router';
-import store from './store';
 
 
 window.$ = window.jQuery = require('jquery'); // eslint-disable-line
@@ -16,12 +15,12 @@ const toastr = require('toastr');
 
 toastr.options.timeOut = 30000; // 30 sec
 
+Vue.use(VueResource);
 Vue.config.productionTip = false;
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
-  store,
   router,
   template: '<App/>',
   components: { App },
