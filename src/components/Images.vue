@@ -27,7 +27,7 @@
             <div class="row">
               <div class="col-md-4">
                 <p class="text-center">Original Image</p>
-                <div class="row">
+                <div class="row margin-zero">
                   <img class="original-img" v-if="selectedImage" :src="selectedImage.image_url" :title="selectedImage.name"/>              
                 </div>
                 <form enctype="multipart/form-data" id="newImageForm">
@@ -272,10 +272,14 @@ article:hover .overlay {
   width: 100%;
   height: 100%;
   margin-bottom: 15px;
-  margin-left: 15px;
 }
 
 #fileLoader {
   display: none;
+}
+
+.margin-zero {
+  margin-left: 0;
+  margin-right: 0;
 }
 </style>
