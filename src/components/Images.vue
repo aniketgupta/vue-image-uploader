@@ -2,8 +2,8 @@
 <template>
   <div>
     <section class="cards">
-      <article v-for="(image,index) in images">
-        <img class="article-img" :src="image.image_url" alt="" :title="image.name"/>
+      <article v-for="(image,index) in images" :title="image.name">
+        <img class="article-img" :src="image.image_url" alt=""/>
         <div class="overlay">
           <a href="#" @click="openEditModal(image, index)" class="edit-icon" title="Edit image">
             <i class="fa fa-pencil"></i>
