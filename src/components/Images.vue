@@ -258,7 +258,7 @@ article:hover .overlay {
   text-align: center;
 }
 
-.fa-user:hover {
+.fa-pencil:hover, .fa-times:hover {
   color: #eee;
 }
 
