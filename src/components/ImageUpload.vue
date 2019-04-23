@@ -1,19 +1,8 @@
-// created by Aniket Gupta on 18.04.2018
+// created by Aniket Gupta on 23.04.2018
 <template>
   <div>
-    <section class="cards">
-      <article v-for="(image,index) in images" :title="image.name">
-        <img class="article-img" :src="image.image_url" alt=""/>
-        <div class="overlay">
-          <a href="#" @click="openEditModal(image, index)" class="edit-icon" title="Edit image">
-            <i class="fa fa-pencil"></i>
-          </a>
-          <a href="#" @click="deleteImage(image, index)" class="cancel-icon" title="Delete image">
-            <i class="fa fa-times"></i>
-          </a>
-        </div>
-      </article>
-    </section>
+    <button type="button" class="btn btn-sm btn-labeled btn-info btn-block" @click="openUploadModal">Upload Image</button>
+    <button type="button" class="btn btn-sm btn-labeled btn-info btn-block" @click="goToImages">Go To Images</button>                  
     <!-- Modal -->
     <div class="modal fade" id="editModal" role="dialog">
       <div class="modal-dialog">
@@ -21,15 +10,11 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Edit Image</h4>
+            <h4 class="modal-title">Upload Image</h4>
           </div>
           <div class="modal-body">
             <div class="row">
               <div class="col-md-4">
-                <p class="text-center">Original Image</p>
-                <div class="row margin-zero">
-                  <img class="original-img" v-if="selectedImage" :src="selectedImage.image_url" :title="selectedImage.name"/>              
-                </div>
                 <form enctype="multipart/form-data" id="newImageForm">
                   <input id="fileLoader" type="file" name="image" accept="image/*" @change="changeImage"/>
                 </form>
@@ -79,7 +64,7 @@
                   <button class="btn btn-primary" type="button" title="Cancel" @click="clearData" v-if="newImgSrc != ''">
                     <span class="fa fa-ban"></span>
                   </button>
-                  <button class="btn btn-primary" type="button" title="OK" @click="cropImage" v-if="newImgSrc != ''">
+                  <button class="btn btn-primary" type="button" title="OK" @click="uploadImage" v-if="newImgSrc != ''">
                     <span class="fa fa-check"></span>
                   </button>
                 </div>
@@ -101,44 +86,22 @@ import toastr from 'toastr';
 import VueCropper from 'vue-cropperjs';
 
 export default {
-  name: 'Images',
+  name: 'ImageUpload',
   components: {
     VueCropper,
   },
   data() {
     return {
-      selectedImage: null,
-      selectedImageIndex: null,
       openCropper: false,
       newImgSrc: '',
-      images: [],
     };
   },
-  created() {
-    this.getImages();
-  },
   methods: {
-    getImages() {
-      // const url = 'http://demo4126999.mockable.io/images';
-      const url = 'http://localhost:8080/api/v1/db/images';
-      this.$http.get(url).then(
-        (response) => {
-          this.images = response.body;
-        },
-        (error) => {
-          if (error.body) {
-            toastr.error(error.body.message);
-          }
-        },
-      );
+    goToImages() {
+      this.$router.push('/images');
     },
-    openEditModal(data, index) {
-      this.selectedImage = data;
-      this.selectedImageIndex = index;
+    openUploadModal() {
       window.$('#editModal').modal('toggle');
-    },
-    deleteImage(data, index) {
-      this.images.splice(index, 1);
     },
     openFileDialog() {
       $('#fileLoader').click();
@@ -186,12 +149,22 @@ export default {
       this.newImgSrc = '';
       document.getElementById('newImageForm').reset();
     },
-    cropImage() {
-      // get image data for post processing, e.g. upload or setting image src
+    uploadImage() {
       const cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL();
-      this.images[this.selectedImageIndex].image_url = cropImg;
-      this.clearData();
-      window.$('#editModal').modal('toggle');
+      const url = 'http://localhost:8080/api/v1/db/images';
+      this.$http.post(url, { image_url: cropImg }).then(
+        () => {
+          toastr.success('Image uploaded successfully');
+          this.clearData();
+        },
+        (error) => {
+          if (error.body.statusCode === 413) {
+            toastr.error('Error: Image is greater than 2MB.');
+          } else {
+            toastr.error(error.body.message);
+          }
+        },
+      );
     },
   },
 };

@@ -13,7 +13,7 @@ window.$ = window.jQuery = require('jquery'); // eslint-disable-line
 require('bootstrap');
 const toastr = require('toastr');
 
-toastr.options.timeOut = 30000; // 30 sec
+toastr.options.timeOut = 2000; // 2 sec
 
 Vue.use(VueResource);
 Vue.config.productionTip = false;
